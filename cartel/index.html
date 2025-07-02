@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicaciones Incluyentes del Sur - Cartel Científico</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            padding: 20px;
+        }
+
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .control-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-pdf {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-print {
+            background: #1e88e5;
+            color: white;
+        }
+
+        .btn-reset {
+            background: #ffb000;
+            color: white;
+        }
+
+        .poster-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: fit-content;
+        }
+
+        .poster {
+            width: 90cm;
+            height: 120cm;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 2cm;
+            font-family: 'Arial', sans-serif;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 1.5cm;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+            transform-origin: top left;
+        }
+
+        /* Header Section with Logos */
+        .header {
+            background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
+            color: white;
+            padding: 0.5cm 2cm 2cm 2cm;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(30, 136, 229, 0.3);
+            position: relative;
+            min-height: 12cm;
+            display: grid;
+            grid-template-rows: auto auto auto;
+            gap: 0.5cm;
+        }
+
+        .header-top {
+            display: grid;
+            grid-template-columns: 8cm 1fr 8cm;
+            gap: 2cm;
+            align-items: center;
+            margin-top: 0.5cm;
+        }
+
+        .logo-left {
+            width: 8cm;
+            height: 6cm;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo-left:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-content-left {
+            background: linear-gradient(135deg, #1e88e5 0%, #ffb000 50%, #b3e5fc 100%);
+            width: 95%;
+            height: 95%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .logo-right {
+            width: 8cm;
+            height: 6cm;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo-right:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-content-right {
+            width: 95%;
+            height: 95%;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #1e88e5;
+            font-weight: bold;
+            text-align: center;
+            padding: 0.5cm;
+        }
+
+        .logo-content-right .icon {
+            font-size: 2.5em;
+            margin-bottom: 0.3cm;
+        }
+
+        .logo-content-right .text {
+            font-size: 1.4em;
+            line-height: 1.1;
+        }
+
+        .logo-content-right .subtext {
+            font-size: 1em;
+            margin-top: 0.2cm;
+            opacity: 0.7;
+        }
+
+        .title {
+            font-size: 4.5em;
+            font-weight: bold;
+            line-height: 1.1;
+            text-align: center;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            margin: 1cm 0;
+        }
+
+        .authors {
+            font-size: 2em;
+            margin-bottom: 0.5cm;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .institutions {
+            font-size: 1.6em;
+            font-style: italic;
+            opacity: 0.9;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2cm;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5cm;
+        }
+
+        .section {
+            background: white;
+            padding: 1.5cm;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border-left: 8px solid #1e88e5;
+        }
+
+        .section-small {
+            min-height: 12cm;
+        }
+
+        .section-medium {
+            min-height: 18cm;
+        }
+
+        .section-large {
+            min-height: 28cm;
+        }
+
+        .section-short {
+            min-height: 10cm;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
+            color: white;
+            font-size: 2.2em;
+            font-weight: bold;
+            padding: 0.8cm 1.2cm;
+            margin: -1.5cm -1.5cm 1cm -1.5cm;
+            border-radius: 15px 15px 0 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .section-content {
+            font-size: 1.6em;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .section-content p {
+            margin-bottom: 1cm;
+        }
+
+        .section-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #ffb000 0%, #ff8f00 100%);
+            padding: 0.3cm 0.5cm;
+            border-radius: 8px;
+            font-weight: bold;
+            color: white;
+            display: inline-block;
+            margin: 0.2cm 0;
+        }
+
+        .key-concept {
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+            border-left: 6px solid #1e88e5;
+            padding: 1cm;
+            margin: 1cm 0;
+            border-radius: 0 10px 10px 0;
+            font-style: italic;
+            font-size: 1.4em;
+        }
+
+        .objectives-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .objectives-list li {
+            position: relative;
+            padding-left: 2cm;
+            margin-bottom: 0.8cm;
+            line-height: 1.5;
+            font-size: 1.4em;
+        }
+
+        .objectives-list li::before {
+            content: "🎯";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.2em;
+        }
+
+        .methodology-item {
+            background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+            border-left: 6px solid #1e88e5;
+            padding: 0.8cm;
+            margin: 0.8cm 0;
+            border-radius: 0 10px 10px 0;
+            font-size: 1.4em;
+        }
+
+        .result-item {
+            background: linear-gradient(135deg, #ffecb3 0%, #ffcc02 100%);
+            border-left: 6px solid #ffb000;
+            padding: 0.8cm;
+            margin: 0.8cm 0;
+            border-radius: 0 10px 10px 0;
+            font-size: 1.4em;
+        }
+
+        .marco-teorico-content {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1cm;
+            align-items: start;
+        }
+
+        .marco-teorico-text {
+            font-size: 1.6em;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .marco-teorico-image {
+            width: 12cm;
+            height: 16cm;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            border: 3px dashed #1e88e5;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            color: #1e88e5;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .marco-teorico-image:hover {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            transform: scale(1.02);
+        }
+
+        .marco-teorico-image::before {
+            content: "📊";
+            font-size: 2.5em;
+            display: block;
+            margin-bottom: 0.5cm;
+        }
+
+        .resultados-content {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1cm;
+            align-items: start;
+        }
+
+        .resultados-text {
+            font-size: 1.6em;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .resultados-image {
+            width: 10cm;
+            height: 8cm;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            border: 3px dashed #ffb000;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            color: #ffb000;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .resultados-image:hover {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffcc02 20%);
+            transform: scale(1.02);
+        }
+
+        .resultados-image::before {
+            content: "📈";
+            font-size: 2.5em;
+            display: block;
+            margin-bottom: 0.5cm;
+        }
+
+        .footer {
+            background: white;
+            padding: 1.5cm;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border-left: 8px solid #1e88e5;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2cm;
+        }
+
+        .references-title {
+            background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
+            color: white;
+            font-size: 2.2em;
+            font-weight: bold;
+            padding: 0.8cm 1.2cm;
+            margin: -1.5cm -1.5cm 1cm -1.5cm;
+            border-radius: 15px 15px 0 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .reference-item {
+            font-size: 1.2em;
+            line-height: 1.4;
+            margin-bottom: 0.8cm;
+            padding-left: 1cm;
+            position: relative;
+        }
+
+        .reference-item::before {
+            content: "•";
+            color: #1e88e5;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .contact-info {
+            text-align: center;
+        }
+
+        .contact-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #1e88e5;
+            margin-bottom: 1cm;
+        }
+
+        .contact-details {
+            font-size: 1.4em;
+            margin-bottom: 1cm;
+        }
+
+        .qr-placeholder {
+            width: 8cm;
+            height: 8cm;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            border: 3px dashed #1e88e5;
+            margin: 1cm auto;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            color: #1e88e5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .qr-placeholder:hover {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            transform: scale(1.05);
+        }
+
+        .editable {
+            position: relative;
+        }
+
+        .editable:hover {
+            outline: 3px dashed #ffb000;
+            outline-offset: 3px;
+        }
+
+        .editable::after {
+            content: "✏️";
+            position: absolute;
+            top: -1.5cm;
+            right: 0;
+            background: #ffb000;
+            color: white;
+            padding: 0.3cm 0.5cm;
+            border-radius: 5px;
+            font-size: 1em;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .editable:hover::after {
+            opacity: 1;
+        }
+
+        .logo-upload {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-upload input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .logo-upload-text {
+            font-size: 1em;
+            opacity: 0;
+            transition: opacity 0.3s;
+            position: absolute;
+            bottom: 0.2cm;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.3cm 0.5cm;
+            border-radius: 5px;
+        }
+
+        .logo-upload:hover .logo-upload-text {
+            opacity: 1;
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Responsive scaling */
+        @media screen and (max-width: 1400px) {
+            .poster {
+                transform: scale(0.5);
+                margin: -30cm 0;
+            }
+        }
+
+        @media screen and (max-width: 900px) {
+            .poster {
+                transform: scale(0.3);
+                margin: -42cm 0;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .control-panel {
+                display: none;
+            }
+            
+            .poster-container {
+                margin: 0;
+                padding: 0;
+                background: transparent;
+                box-shadow: none;
+            }
+            
+            .poster {
+                width: 90cm;
+                height: 120cm;
+                transform: none;
+                margin: 0;
+                page-break-inside: avoid;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Panel de Control -->
+    <div class="control-panel">
+        <button class="control-btn btn-pdf" onclick="generatePDF()">
+            📄 Descargar PDF (90x120cm)
+        </button>
+        <button class="control-btn btn-print" onclick="window.print()">
+            🖨️ Imprimir
+        </button>
+        <button class="control-btn btn-reset" onclick="resetContent()">
+            🔄 Resetear Contenido
+        </button>
+        <div id="status"></div>
+    </div>
+
+    <div class="poster-container">
+        <div class="poster" id="poster">
+            <!-- Header -->
+            <div class="header">
+                <!-- Header Top Row with Logos -->
+                <div class="header-top">
+                    <!-- Logo Left - UMQ -->
+                    <div class="logo-left logo-upload">
+                        <input type="file" id="logo-left-input" accept="image/*">
+                        <div class="logo-content-left" onclick="document.getElementById('logo-left-input').click()">
+                            UMQ
+                        </div>
+                        <div class="logo-upload-text">Clic para cambiar logo UMQ</div>
+                    </div>
+
+                    <!-- Espacio central -->
+                    <div></div>
+
+                    <!-- Logo Right - DHEDIP -->
+                    <div class="logo-right logo-upload">
+                        <input type="file" id="logo-right-input" accept="image/*">
+                        <div class="logo-content-right" onclick="document.getElementById('logo-right-input').click()">
+                            <div class="icon">🎓</div>
+                            <div class="text">DHEDIP</div>
+                            <div class="subtext">Doctorado Humanista<br>en Educación, Digitalidad<br>y Prospectiva</div>
+                        </div>
+                        <div class="logo-upload-text">Clic para cambiar logo DHEDIP</div>
+                    </div>
+                </div>
+                
+                <!-- Título Principal -->
+                <h1 class="title editable" contenteditable="true">
+                    [Escriba aquí el título de su investigación - Texto grande para lectura a distancia]
+                </h1>
+                
+                <!-- Autores e Instituciones -->
+                <div>
+                    <div class="authors editable" contenteditable="true">
+                        [Nombres de los autores] • [Nombres de los autores]
+                    </div>
+                    <div class="institutions editable" contenteditable="true">
+                        [Institución 1] • [Institución 2]
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Left Column -->
+                <div class="column">
+                    <!-- Introducción - MEDIANO -->
+                    <div class="section section-medium">
+                        <h2 class="section-title">Introducción</h2>
+                        <div class="section-content editable" contenteditable="true">
+                            <p>Los países del Sur o en desarrollo tradicionalmente voltean hacia los países del Norte o desarrollados para imitar sus modelos de ser y actuar. Sin embargo, como se tienen muy diferentes circunstancias y contextos, la adopción de modelos ajenos resulta poco conveniente y puede perpetuar relaciones de dependencia epistemológica.</p>
+                            
+                            <div class="key-concept">
+                                Ya es tiempo de plantear nuestros propios modelos de publicación del Sur, sin esperar que del Norte nos dicten la "agenda temática", porque nuestras preocupaciones e intereses no necesariamente coinciden con los suyos.
+                            </div>
+                            
+                            <p>Esta investigación surge de la necesidad urgente de <span class="highlight">democratizar el conocimiento</span> y promover una ética dialógica que permita salir en busca de soluciones consensuadas, participando en deliberaciones cívicas con igualdad de oportunidades para entrar en debates sobre asuntos que competen a todos.</p>
+                            
+                            <p>El objetivo principal es contribuir en el diseño de modelos de publicación incluyentes que sirvan como andamiajes para preparar a las nuevas generaciones del Sur con las herramientas necesarias para participar en debates cada vez más especializados, transitando de la interdisciplinariedad a la transdisciplinariedad.</p>
+                            
+                            <p>La propuesta se fundamenta en la necesidad de <span class="highlight">rescatar y visibilizar</span> los conocimientos que han sido excluidos por el epistemicidio global, transformando las ausencias en presencias mediante una ecología de saberes que reconozca la diversidad epistemológica del mundo.</p>
+                            
+                            <p>En contraposición al "occidentalismo" eurocéntrico que pretende monopolizar la agenda temática en torno a generación y distribución de conocimientos, esta propuesta invita a realizar viajes epistemológicos que asuman factores espacio-temporales, histórico-culturales y político-económicos como disparadores de vivencias significativas.</p>
+                        </div>
+                    </div>
+
+                    <!-- Marco Teórico-Metodológico - GRANDE (con imagen) -->
+                    <div class="section section-large">
+                        <h2 class="section-title">Marco Teórico-Metodológico</h2>
+                        <div class="marco-teorico-content">
+                            <div class="marco-teorico-text editable" contenteditable="true">
+                                <div class="methodology-item">
+                                    <strong>Epistemología del Sur</strong> (Boaventura de Sousa Santos): El término 'SUR' como metáfora del sufrimiento humano causado por el colonialismo y el capitalismo desde el descubrimiento de América en 1492. "El Sur de la epistemología del Sur es un sur antiimperial" que parte de la deconstrucción y reconstrucción de la historia cultural local.
+                                </div>
+                                
+                                <div class="methodology-item">
+                                    <strong>Transmodernidad</strong> (Enrique Dussel): La "transversalidad del diálogo intercultural transmoderno" para la reconstrucción de la historia cultural latinoamericana. Indica la novedad de "la irrupción desde la exterioridad alternativa, de culturas universales que responden DESDE OTRO LUGAR que es el sitio de sus propias experiencias culturales".
+                                </div>
+                                
+                                <div class="methodology-item">
+                                    <strong>Aprendizaje Colaborativo</strong> (Pierre Lévy): Tres movimientos implicados - movimiento centrípeto (expresión individual), movimiento circular (conversaciones entre pares), y movimiento centrífugo (devolución del conocimiento sistematizado). Este proceso transforma el conocimiento tácito en explícito.
+                                </div>
+                                
+                                <p><span class="highlight">Metodología aplicada:</span></p>
+                                
+                                <p><strong>Sociología de las ausencias:</strong> Rescatar fragmentos de experiencia social negada por no convenir a intereses de conquistadores dominantes. Esta metodología busca hacer visible lo que ha sido invisibilizado por el epistemicidio global.</p>
+                                
+                                <p><strong>Sociología de las emergencias:</strong> Transformar las ausencias en presencias mediante la sistematización transdisciplinaria del conocimiento colectivo. Se enfoca en ampliar las experiencias posibles y disponibles.</p>
+                                
+                                <p><strong>Ecología de saberes:</strong> Diálogo intercultural que incluye múltiples universalidades: la taoísta, la islámica, la europea, la cristiana, la latinoamericana, etc. Reconoce la diversidad epistemológica del mundo.</p>
+                                
+                                <div class="key-concept">
+                                    La metodología busca conectar cerebros y exacerebros del Sur hacia el sudeste-sudoeste-nordeste-noroeste para perfilar una sociedad enmarcada en un sistema-mundo que converja en la búsqueda del bien común.
+                                </div>
+                                
+                                <p>El enfoque metodológico integra la <span class="highlight">conversación civilizada</span> que supone el desarrollo de habilidades digitales y el establecimiento de reglas del juego mediante n-etiqueta y ética deliberativa.</p>
+                                
+                                <div class="methodology-item">
+                                    <strong>Proceso de Investigación:</strong> La metodología implementada siguió un enfoque cualitativo con elementos participativos, donde se privilegió la voz de los actores del Sur Global. Se realizaron análisis documentales de experiencias de publicación alternativa, entrevistas con editores y académicos latinoamericanos, y sistematización de buenas prácticas en revistas académicas del Sur.
+                                </div>
+                                
+                                <p><strong>Técnicas de recolección de datos:</strong> Se utilizaron grupos focales con académicos del Sur, análisis de contenido de publicaciones existentes, mapeo de redes de conocimiento, y observación participante en espacios de diálogo académico intercultural.</p>
+                                
+                                <p><strong>Marco de análisis:</strong> El análisis se fundamentó en los principios de la <span class="highlight">hermenéutica intercultural</span>, permitiendo la comprensión de diferentes formas de conocimiento sin imponer marcos epistemológicos occidentales. Se aplicó el concepto de "traducción intercultural" propuesto por De Sousa Santos para facilitar el diálogo entre diferentes saberes.</p>
+                                
+                                <p><strong>Validación del conocimiento:</strong> La validación se realizó mediante la <span class="highlight">triangulación de fuentes</span> (académicas del Norte y del Sur), la consulta con comunidades epistémicas diversas, y la implementación piloto de los modelos propuestos en contextos reales de publicación académica.</p>
+                                
+                                <p>El marco teórico-metodológico se complementa con el análisis de experiencias exitosas de <span class="highlight">democratización del conocimiento</span> en América Latina, África y Asia, identificando patrones comunes y estrategias replicables para el fortalecimiento de las epistemologías del Sur.</p>
+                            </div>
+                            <div class="marco-teorico-image editable" onclick="uploadImage(this)">
+                                <div>
+                                    Agregar imagen<br>Marco Teórico<br>
+                                    <small>(Diagrama conceptual)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="column">
+                    <!-- Objetivos - PEQUEÑO -->
+                    <div class="section section-small">
+                        <h2 class="section-title">Objetivos</h2>
+                        <div class="section-content editable" contenteditable="true">
+                            <ul class="objectives-list">
+                                <li>Diseñar modelos de publicación incluyentes que sirvan como andamiajes para preparar a las nuevas generaciones del Sur con las herramientas necesarias para participar en debates especializados</li>
+                                <li>Promover la transición de la interdisciplinariedad a la transdisciplinariedad en los procesos de generación y distribución del conocimiento académico</li>
+                                <li>Socializar la "conversación civilizada" mediante el desarrollo de habilidades digitales y el establecimiento de reglas del juego (n-etiqueta y ética deliberativa)</li>
+                                <li>Establecer una ecología de saberes que transforme las ausencias en presencias, rescatando fragmentos de experiencia social negada por intereses dominantes</li>
+                                <li>Contribuir al diseño de un sistema-mundo que converja en la búsqueda del bien común, conectando cerebros y exacerebros del Sur hacia los cuatro puntos cardinales</li>
+                                <li>Implementar la metodología de la epistemología del Sur para desafiar el monopolio occidental del conocimiento y visibilizar saberes alternativos</li>
+                                <li>Fomentar el diálogo intercultural transmoderno que incluya múltiples universalidades: taoísta, islámica, europea, cristiana, latinoamericana, entre otras</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Resultados - MEDIANO (con imagen) -->
+                    <div class="section section-medium">
+                        <h2 class="section-title">Resultados</h2>
+                        <div class="resultados-content">
+                            <div class="resultados-text editable" contenteditable="true">
+                                <div class="result-item">
+                                    <strong>EduTrIn como modelo ejemplar:</strong> Revista electrónica que ofrece un espacio público para emitir las voces del Sur que sobrevive en nuestra historia colectiva, no solamente portando el grito desgarrador del oprimido, sino el coraje por compartir otras visiones de mundo alternativas al discurso hegemónico occidental.
+                                </div>
+                                
+                                <div class="result-item">
+                                    <strong>Transición digital exitosa:</strong> El paso de la historia a la hiperhistoria mediante puentes cibernéticos que permiten transitar de lo analógico estático a lo digital dinámico. Se ha logrado crear conexiones que facilitan el intercambio de conocimientos entre diferentes culturas del Sur.
+                                </div>
+                                
+                                <div class="result-item">
+                                    <strong>Red de conocimiento establecida:</strong> Ensamblajes que conecten cerebros y exacerebros del Sur hacia el sudeste-sudoeste-nordeste-noroeste, estableciendo conexiones epistemológicas que desafían el monopolio occidental del conocimiento académico.
+                                </div>
+                                
+                                <p>Se ha logrado establecer un <span class="highlight">modelo alternativo de publicación</span> que promueve la diversidad cultural del conocimiento y la inclusión de saberes locales, contribuyendo significativamente a la democratización del conocimiento académico.</p>
+                                
+                                <p>La implementación de la <span class="highlight">"conversación civilizada"</span> ha permitido el desarrollo de habilidades digitales y el establecimiento de reglas del juego mediante n-etiqueta y ética deliberativa, creando espacios seguros para el diálogo intercultural.</p>
+                                
+                                <p>Los resultados muestran una <span class="highlight">participación creciente</span> de voces del Sur en la producción académica, rompiendo con la dependencia epistemológica del Norte y fomentando la creación de conocimiento desde las propias experiencias culturales latinoamericanas.</p>
+                                
+                                <div class="key-concept">
+                                    El proyecto ha demostrado que es posible construir alternativas viables al modelo de publicación occidental dominante, generando espacios inclusivos para el conocimiento del Sur.
+                                </div>
+                            </div>
+                            <div class="resultados-image editable" onclick="uploadImage(this)">
+                                <div>
+                                    Agregar imagen<br>Resultados<br>
+                                    <small>(Gráficos/datos)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conclusiones - CORTO -->
+                    <div class="section section-short">
+                        <h2 class="section-title">Conclusiones</h2>
+                        <div class="section-content editable" contenteditable="true">
+                            <p>En contraposición al "occidentalismo" eurocéntrico que pretende monopolizar la agenda temática en torno a generación y distribución de conocimientos, esta propuesta establece un <span class="highlight">"sur antiimperial"</span> que parte de la deconstrucción y reconstrucción de la historia cultural local, denunciando el epistemicidio global.</p>
+                            
+                            <p>Se busca socializar la <span class="highlight">"conversación civilizada"</span> mediante el desarrollo de habilidades digitales y el establecimiento de reglas del juego (n-etiqueta y ética deliberativa) hacia una sociedad de saberes alternativos que sea incluyente, democrática y transformadora del sistema-mundo para el bien común.</p>
+                            
+                            <div class="key-concept">
+                                Las publicaciones del Sur deben incluir muchas universalidades: la taoísta, la islámica, la europea, la cristiana, la latinoamericana, etc., respondiendo desde el sitio de sus propias experiencias culturales.
+                            </div>
+                            
+                            <p>El proceso implica un sueño utópico de una sociedad de saberes alternativos que transforme el sistema-mundo actual, permitiendo la <span class="highlight">emergencia de voces</span> que han sido históricamente silenciadas pero que poseen conocimientos fundamentales para el desarrollo humano integral.</p>
+                            
+                            <p>La implementación exitosa de modelos como EduTrIn demuestra que es posible crear espacios públicos genuinos para la expresión del Sur, no solo como testimonio del sufrimiento, sino como propuesta constructiva de alternativas viables para el futuro de la humanidad.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer - Referencias -->
+            <div class="footer">
+                <div class="references-title">Referencias Bibliográficas</div>
+                <div class="footer-content">
+                    <div class="editable" contenteditable="true">
+                        <div class="reference-item">Angel R., C.J., & Landaverde T., J. (2017). Experiencia del desarrollo de un portal para la difusión de la educación: caso EduTrIn. En: Memorias del congreso: LOS RETOS DE LA EDUCACIÓN EN MÉXICO. Gestión del Conocimiento y de las Instituciones Educativas.</div>
+                        <div class="reference-item">De Sousa Santos, B., Meneses, M. P. (2014). Epistemologías del sur (Vol. 75). Ediciones Akal. Madrid, España.</div>
+                        <div class="reference-item">Dussel, E. (2016). Filosofías del Sur. Descolonización y transmodernidad. Ciudad de México: Ediciones Akal México, S.A. de C.V.</div>
+                        <div class="reference-item">Lévy, P. (2007). Cibercultura, Informe al Consejo de Europa. México: Anthropos, Universidad Autónoma Metropolitana.</div>
+                        <div class="reference-item">Floridi, L. (2015). Hiperhistoria, el surgimiento de los sistemas multiagente (SMA) y el diseño de una infraética. En: X. Martínez R., & IPN (Ed.), Infoesfera. Ciudad de México: Quinta del Agua Ediciones S.A. de C.V.</div>
+                        <div class="reference-item">Landaverde T., J. (2017). Escritos Académicos en Humanidades. Universidad Marista de Querétaro, EduTrIn Editorial.</div>
+                        <div class="reference-item">Rodríguez L., F., & Landaverde T., J. (2017). Gestión de conocimientos en la sociedad del conocimiento, siglo XXI. En Memorias del congreso: LOS RETOS DE LA EDUCACIÓN EN MÉXICO.</div>
+                        <div class="reference-item">Corona M., L. & Landaverde T., J. (2017). Hacia un modelo alternativo de educación no escolarizada. En: Memorias del congreso: LOS RETOS DE LA EDUCACIÓN EN MÉXICO.</div>
+                        <div class="reference-item">Mignolo, W. (2003). Historias locales/diseños globales: colonialidad, conocimientos subalternos y pensamiento fronterizo. Madrid: Akal.</div>
+                        <div class="reference-item">Quijano, A. (2000). Colonialidad del poder, eurocentrismo y América Latina. En E. Lander (comp.), La colonialidad del saber: eurocentrismo y ciencias sociales. Buenos Aires: CLACSO.</div>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-title">Información de Contacto</div>
+                        <div class="contact-details editable" contenteditable="true">
+                            ✉️ contacto@edutrin.net<br>
+                            🌐 www.edutrin.net
+                        </div>
+                        <div class="qr-placeholder" onclick="uploadImage(this)">
+                            Código QR<br>del sitio web
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    status.textContent = '';
+                    status.className = 'status';
+                }, 5000);
+            }
+        }
+
+        async function generatePDF() {
+            showStatus('Generando PDF con dimensiones 90x120cm...', 'info');
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                
+                // Crear PDF con dimensiones exactas en cm
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'cm',
+                    format: [90, 120] // 90cm x 120cm
+                });
+
+                const poster = document.getElementById('poster');
+                
+                // Ocultar elementos de edición durante la captura
+                const editableElements = poster.querySelectorAll('.editable');
+                editableElements.forEach(el => {
+                    el.style.outline = 'none';
+                });
+                
+                // Asegurar que el poster esté completamente visible
+                const originalTransform = poster.style.transform;
+                const originalPosition = poster.style.position;
+                const originalLeft = poster.style.left;
+                const originalTop = poster.style.top;
+                
+                // Temporal: resetear transformaciones para captura completa
+                poster.style.transform = 'none';
+                poster.style.position = 'static';
+                poster.style.left = 'auto';
+                poster.style.top = 'auto';
+                
+                // Forzar un reflow
+                poster.offsetHeight;
+                
+                showStatus('Capturando imagen del cartel completo...', 'info');
+                
+                // Capturar el cartel como imagen con configuración optimizada para altura completa
+                const canvas = await html2canvas(poster, {
+                    scale: 1.5, // Buena resolución sin ser excesivo
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    width: poster.scrollWidth,
+                    height: poster.scrollHeight, // Usar scrollHeight para capturar todo
+                    scrollX: 0,
+                    scrollY: 0,
+                    windowWidth: poster.scrollWidth,
+                    windowHeight: poster.scrollHeight,
+                    foreignObjectRendering: true,
+                    logging: false,
+                    onclone: function(clonedDoc) {
+                        // Asegurar que el elemento clonado tenga las dimensiones correctas
+                        const clonedPoster = clonedDoc.getElementById('poster');
+                        if (clonedPoster) {
+                            clonedPoster.style.transform = 'none';
+                            clonedPoster.style.position = 'static';
+                            clonedPoster.style.width = '90cm';
+                            clonedPoster.style.height = '120cm';
+                        }
+                    }
+                });
+
+                // Restaurar estilos originales
+                poster.style.transform = originalTransform;
+                poster.style.position = originalPosition;
+                poster.style.left = originalLeft;
+                poster.style.top = originalTop;
+                
+                showStatus('Procesando imagen y generando PDF...', 'info');
+
+                // Verificar dimensiones del canvas
+                console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
+                
+                // Convertir canvas a imagen
+                const imgData = canvas.toDataURL('image/png', 0.95);
+                
+                // Calcular las dimensiones para mantener proporción
+                const canvasRatio = canvas.width / canvas.height;
+                const pdfRatio = 90 / 120;
+                
+                let pdfWidth = 90;
+                let pdfHeight = 120;
+                
+                if (canvasRatio > pdfRatio) {
+                    // Canvas es más ancho proporcionalmente
+                    pdfHeight = pdfWidth / canvasRatio;
+                } else {
+                    // Canvas es más alto proporcionalmente o igual
+                    pdfWidth = pdfHeight * canvasRatio;
+                }
+                
+                // Centrar la imagen en el PDF
+                const offsetX = (90 - pdfWidth) / 2;
+                const offsetY = (120 - pdfHeight) / 2;
+                
+                // Agregar imagen al PDF con las dimensiones calculadas
+                pdf.addImage(imgData, 'PNG', offsetX, offsetY, pdfWidth, pdfHeight);
+                
+                // Descargar el PDF
+                const fileName = `Cartel_Cientifico_90x120cm_${new Date().toISOString().slice(0,10)}.pdf`;
+                pdf.save(fileName);
+                
+                showStatus(`PDF generado exitosamente: ${fileName}`, 'success');
+                
+            } catch (error) {
+                console.error('Error generando PDF:', error);
+                showStatus('Error al generar PDF. Intente nuevamente.', 'error');
+            }
+        }
+
+        function uploadImage(element) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        element.style.backgroundImage = `url(${e.target.result})`;
+                        element.style.backgroundSize = 'cover';
+                        element.style.backgroundRepeat = 'no-repeat';
+                        element.style.backgroundPosition = 'center';
+                        element.innerHTML = '';
+                        element.style.border = 'none';
+                        showStatus('Imagen cargada exitosamente', 'success');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        function resetContent() {
+            if (confirm('¿Está seguro de que desea resetear todo el contenido del cartel?')) {
+                location.reload();
+            }
+        }
+
+        // Logo upload functionality
+        document.getElementById('logo-left-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const logoContainer = document.querySelector('.logo-content-left');
+                    logoContainer.style.backgroundImage = `url(${e.target.result})`;
+                    logoContainer.style.backgroundSize = 'contain';
+                    logoContainer.style.backgroundRepeat = 'no-repeat';
+                    logoContainer.style.backgroundPosition = 'center';
+                    logoContainer.innerHTML = '';
+                    showStatus('Logo UMQ actualizado', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('logo-right-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const logoContainer = document.querySelector('.logo-content-right');
+                    logoContainer.style.backgroundImage = `url(${e.target.result})`;
+                    logoContainer.style.backgroundSize = 'contain';
+                    logoContainer.style.backgroundRepeat = 'no-repeat';
+                    logoContainer.style.backgroundPosition = 'center';
+                    logoContainer.innerHTML = '';
+                    showStatus('Logo DHEDIP actualizado', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Add interactivity for better editing experience
+        document.querySelectorAll('.editable').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.style.background = 'rgba(255, 176, 0, 0.1)';
+            });
+            
+            element.addEventListener('blur', function() {
+                this.style.background = '';
+            });
+        });
+
+        // Prevent dragging of images
+        document.addEventListener('dragstart', function(e) {
+            if (e.target.tagName === 'IMG') {
+                e.preventDefault();
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showStatus('Cartel científico listo para editar. Use los botones para generar PDF.', 'info');
+        });
+    </script>
+</body>
+</html>
